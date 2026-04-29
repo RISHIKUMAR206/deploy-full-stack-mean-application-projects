@@ -86,35 +86,33 @@ crud-nginx      nginx:stable-alpine      running         0.0.0.0:80->80/tcp
 
 ## 🧱 Architecture
 
-[ User / Browser ]
-               │
-               ▼
-       [ Elastic IP: 43.204.79.124 ]
-               │
-               ▼
-┌───────────────────────────────────────────┐
-│          Nginx Reverse Proxy (:80)        │
-│          (Container: crud-nginx)          │
-└──────────────┬────────────────────────────┘
-               │
-      ┌────────┴──────────────┐
-      │                       │
-      ▼                       ▼
-  /api/* (Requests)      (Static Assets)
-      │                       │
-      ▼                       ▼
-┌──────────────┐        ┌───────────────┐
-│   Backend    │        │   Frontend    │
-│ (Node.js API)│        │ (Angular App) │
-│   :8080      │        │    :8081      │
-└──────┬───────┘        └───────────────┘
-       │
-       ▼
-┌──────────────┐
-│   MongoDB    │
-│ (Database)   │
-│   :27017     │
-└──────────────┘
+```
+Browser
+   │
+   ▼
+┌─────────────────────────────────┐
+│  Nginx Reverse Proxy  :80       │
+│  (crud-nginx container)         │
+└──────────┬──────────────────────┘
+           │
+    ┌──────┴──────────────┐
+    │                     │
+    ▼                     ▼
+/api/\*              everything else
+    │                     │
+    ▼                     ▼
+┌──────────┐        ┌───────────┐
+│ Backend  │        │ Frontend  │
+│ Node.js  │        │ Angular   │
+│  :8080   │        │  :8081    │
+└────┬─────┘        └───────────┘
+     │
+     ▼
+┌──────────┐
+│ MongoDB  │
+│  :27017  │
+└──────────┘
+
 
 All containers → custom-network (Docker bridge)
 MongoDB data → persisted in `mongo\_data` named volume
