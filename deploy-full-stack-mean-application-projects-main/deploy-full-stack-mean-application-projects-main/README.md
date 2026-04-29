@@ -1,11 +1,9 @@
-# MEAN Stack CRUD App — Tutorials Manager
+\\- MEAN Stack CRUD App — Tutorials Manager (AWS Deployed)
+A full-stack CRUD application built with the MEAN stack (MongoDB, Express, Angular 15, Node.js), containerised with Docker, and served via Nginx. The application is hosted on an AWS EC2 instance using a static Elastic IP for permanent availability.
 
-A full-stack CRUD application built with the **MEAN stack** (MongoDB, Express, Angular 15, Node.js), containerised with Docker, served via Nginx, and deployed automatically through a GitHub Actions CI/CD pipeline.
+Live URL: http://43.204.79.124
 
-> \*\*Live URL (local):\*\* http://localhost  
-> \*\*API Base:\*\* http://localhost/api/tutorials
-
-
+API Base: http://43.204.79.124/api/tutorials
 
 \---
 
@@ -13,38 +11,20 @@ A full-stack CRUD application built with the **MEAN stack** (MongoDB, Express, A
 
 ```
 crud-dd-task-mean-app/
-├── .github/
-│   └── workflows/
-│       └── main.yml          # GitHub Actions CI/CD pipeline
-├── backend/
-│   ├── app/
-│   │   ├── config/
-│   │   │   └── db.config.js   # MongoDB connection URL
-│   │   ├── controllers/
-│   │   │   └── tutorial.controller.js
-│   │   ├── models/
-│   │   │   ├── index.js
-│   │   │   └── tutorial.model.js
-│   │   └── routes/
-│   │       └── turorial.routes.js
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── package.json
-│   └── server.js
-├── frontend/
-│   ├── src/
-│   │   └── app/
-│   │       └── services/
-│   │           └── tutorial.service.ts  # API base URL setting
-│   ├── .dockerignore
-│   ├── Dockerfile
-│   ├── nginx.conf             # Nginx config for Angular container
-│   ├── angular.json
-│   └── package.json
-├── nginx/
-│   └── default.conf           # Nginx reverse proxy config (port 80)
-├── docker-compose.yml
-└── README.md
+├── backend/                  # Node.js + Express API
+│   ├── app/                  # Controllers, Models, Routes
+│   ├── Dockerfile            # Backend Docker instructions
+│   ├── package.json          # Dependencies
+│   └── server.js             # Entry point
+├── frontend/                 # Angular 15 Application
+│   ├── src/                  # Components & Services
+│   ├── Dockerfile            # Multi-stage Docker build
+│   ├── nginx.conf            # Internal Nginx config (Port 8081)
+│   └── package.json          # Frontend dependencies
+├── nginx/                    # Reverse Proxy Setup
+│   └── default.conf          # Main Nginx config (Port 80)
+├── docker-compose.yml        # Orchestration (Images: rishikj2005)
+└── README.md                 # Project Documentation
 ```
 
 \---
@@ -106,32 +86,35 @@ crud-nginx      nginx:stable-alpine      running         0.0.0.0:80->80/tcp
 
 ## 🧱 Architecture
 
-```
-Browser
-   │
-   ▼
-┌─────────────────────────────────┐
-│  Nginx Reverse Proxy  :80       │
-│  (crud-nginx container)         │
-└──────────┬──────────────────────┘
-           │
-    ┌──────┴──────────────┐
-    │                     │
-    ▼                     ▼
-/api/\*              everything else
-    │                     │
-    ▼                     ▼
-┌──────────┐        ┌───────────┐
-│ Backend  │        │ Frontend  │
-│ Node.js  │        │ Angular   │
-│  :8080   │        │  :8081    │
-└────┬─────┘        └───────────┘
-     │
-     ▼
-┌──────────┐
-│ MongoDB  │
-│  :27017  │
-└──────────┘
+[ User / Browser ]
+               │
+               ▼
+       [ Elastic IP: 43.204.79.124 ]
+               │
+               ▼
+┌───────────────────────────────────────────┐
+│          Nginx Reverse Proxy (:80)        │
+│          (Container: crud-nginx)          │
+└──────────────┬────────────────────────────┘
+               │
+      ┌────────┴──────────────┐
+      │                       │
+      ▼                       ▼
+  /api/* (Requests)      (Static Assets)
+      │                       │
+      ▼                       ▼
+┌──────────────┐        ┌───────────────┐
+│   Backend    │        │   Frontend    │
+│ (Node.js API)│        │ (Angular App) │
+│   :8080      │        │    :8081      │
+└──────┬───────┘        └───────────────┘
+       │
+       ▼
+┌──────────────┐
+│   MongoDB    │
+│ (Database)   │
+│   :27017     │
+└──────────────┘
 
 All containers → custom-network (Docker bridge)
 MongoDB data → persisted in `mongo\_data` named volume
