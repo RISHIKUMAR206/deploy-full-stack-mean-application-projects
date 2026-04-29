@@ -1,6 +1,6 @@
 # MEAN Stack CRUD App — Tutorials Manager
 \- MEAN Stack CRUD App — Tutorials Manager (AWS Deployed)
-A full-stack CRUD application built with the MEAN stack (MongoDB, Express, Angular 15, Node.js), containerised with Docker, and served via Nginx. The application is hosted on an AWS EC2 instance using a static Elastic IP for permanent availability.
+A full-stack CRUD application built with the MEAN stack (MongoDB, Express, Angular 15, Node.js), containerised with Docker, and served via Nginx. The application is hosted on an AWS EC2 instance.
 
 > \*\*Live URL (local):\*\* http://localhost  
 > \*\*API Base:\*\* http://localhost/api/tutorials
